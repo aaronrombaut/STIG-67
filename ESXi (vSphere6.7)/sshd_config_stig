@@ -1,0 +1,120 @@
+# Version 6.7.2.0
+
+# running from inetd
+# Port 2200
+Protocol 2
+HostKey /etc/ssh/ssh_host_rsa_key
+
+# Fips mode restricts ciphers to only FIPS-permitted ciphers
+# V-239267
+#FipsMode yes
+
+# OpenSSH 7.8 switched to af21/cs1, which has been observed to cause
+# connection drops. Override to earlier values.
+IPQoS lowdelay throughput
+
+# vPP FCS_SSH_EXT.1.7: rekey after 1GB, 1H (instead of default 4GB for AES)
+RekeyLimit 1G, 1H
+
+SyslogFacility auth
+LogLevel info
+
+# V-239270
+#PermitRootLogin yes
+
+PrintMotd yes
+PrintLastLog no
+
+TCPKeepAlive yes
+
+# V-239278
+#X11Forwarding no
+
+# V-239331
+#Ciphers aes256-gcm@openssh.com,aes128-gcm@openssh.com,aes256-ctr,aes192-ctr,aes128-ctr
+
+MACs hmac-sha2-256,hmac-sha2-512,hmac-sha1
+
+UsePAM yes
+# only use PAM challenge-response (keyboard-interactive)
+PasswordAuthentication no
+
+# V-239266
+#Banner /etc/issue
+
+Subsystem sftp /usr/lib/vmware/openssh/bin/sftp-server -f LOCAL5 -l INFO
+
+AuthorizedKeysFile /etc/ssh/keys-%u/authorized_keys
+
+# Timeout value of 10 mins. The default value of ClientAliveCountMax is 3.
+# Hence, we get a  3 * 200 = 600 seconds timeout if the client has been
+# unresponsive.
+# V-239282
+#ClientAliveInterval 200
+
+# sshd(8) will refuse connection attempts with a probability of "rate/100"
+# (30%) if there are currently "start" (10) unauthenticated connections.  The
+# probability increases linearly and all connection attempts are refused if the
+# number of unauthenticated connections reaches "full" (100)
+MaxStartups 10:30:100
+
+
+###############################################
+##   STIG Items - Current as of 04/28/2021   ##
+###############################################
+# V-239266
+Banner /etc/issue
+
+# V-239267
+FipsMode yes
+
+# V-239268
+IgnoreRhosts yes
+
+# V-239269
+HostbasedAuthentication no
+
+# V-239270
+PermitRootLogin no
+
+# V-239271
+PermitEmptyPasswords no
+
+# V-239272
+PermitUserEnvironment no
+
+# V-239273
+GSSAPIAuthentication no
+
+# V-239274
+KerberosAuthentication no
+
+# V-239275
+StrictModes yes
+
+# V-239276
+Compression no
+
+# V-239277
+GatewayPorts no
+
+# V-239278
+X11Forwarding no
+
+# V-239279
+AcceptEnv
+
+# V-239280
+PermitTunnel no
+
+# V-239281
+ClientAliveCountMax 3
+
+# V-239282
+ClientAliveInterval 200
+
+# V-239283
+MaxSessions 1
+
+# V-239331
+Ciphers aes128-ctr,aes192-ctr,aes256-ctr
